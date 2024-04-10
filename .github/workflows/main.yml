@@ -1,0 +1,27 @@
+name: Deploying Wordpress Site
+on:
+  push:
+    branches:
+      - main
+jobs:
+  Deploy-To-Wordpress:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ vars.SERVER_URL }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ vars.SERVER_PORT }}
+          protocol: ${{ vars.SERVER_PROTOCOL }}
+          server-dir: ${{ vars.SERVER_DIR }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
