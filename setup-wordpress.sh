@@ -46,6 +46,10 @@ scp -P ${SSH_SERVER_PORT} ./ovhconfig ${SSH_SERVER_USER}@${SSH_SERVER_IP}:.ovhco
 
 check_dependencies # Make sure everything's installed
 
+[[ -f ./src/wp-settings.php ]] || {
+  WP_CLI core download --locale=fr_FR --force --skip-content
+}
+
 SSH '[[ -f .bin/wp-cli ]]' || {
   echo -e "\n\n${Yellow}Installing WP-CLI..${Color_Off}"
   SSH wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -60,7 +64,8 @@ WP_CLI package install wp-cli/restful # Can be used for REST based operations
 
 
 WP_CLI config create --skip-check --force --dbname="${MYSQL_DATABASE}" --dbuser="${MYSQL_USER}" --dbpass="${MYSQL_PASSWORD}" \
-  --dbhost="${MYSQL_HOST}" --dbprefix=wp_ 
+  --dbhost="${MYSQL_HOST}" --dbprefix=${WORDPRESS_TABLE_PREFIX}
+
 
 echo -e "\n\n${Yellow}Uploading Wordpress to ${SSH_SERVER_IP}..${Color_Off}"
 rsync --info=progress2 -avPz ./src/* ${SSH_SERVER_USER}@${SSH_SERVER_IP}:. # Fast upload to the remote server via SSH
@@ -79,6 +84,9 @@ SSH ./.bin/wp-cli db create --dbuser="${MYSQL_USER}" --dbpass="${MYSQL_PASSWORD}
 echo -e "\n\n${Yellow}Installing Wordpress..${Color_Off}"
 SSH ./.bin/wp-cli core install --skip-email --url="${SITE_URL}" --title="${SITE_TITLE}" --admin_user="${SITE_ADMIN_USER}" \
   --admin_password="${SITE_ADMIN_PASSWORD}" --admin_email="${SITE_ADMIN_EMAIL}"
+
+SSH ./.bin/wp-cli theme activate dsbd
+SSH ./.bin/wp-cli theme delete --all
 
 # If package.txt exists, we then install all the packages
 echo -e "\n\n${Yellow}Installing packages..${Color_Off}"

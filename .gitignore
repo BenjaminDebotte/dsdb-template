@@ -21,6 +21,8 @@
 .env*
 !.env.example
 
+.wp-cli
+
 # Database directory
 /db/*.sql
 

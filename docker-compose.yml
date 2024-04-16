@@ -4,41 +4,33 @@ services:
     image: mysql:8.0.27
     command: "--default-authentication-plugin=mysql_native_password"
     volumes:
-      - db_data:/var/lib/mysql
+      - sql_data:/var/lib/mysql
     restart: always
     expose:
       - 3306
-      - 33060
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     env_file:
       - .env.local
+    user: "1000:1000"
   wordpress:
     image: wordpress:latest
     volumes:
-      - ./src/wp-content/themes/dsbd/:/var/www/html/wp-content/themes/dsbd
-      - ./src/wp-content/plugins/:/var/www/html/wp-content/plugins
+      - ./src/wp-content/themes/dsbd/:/var/www/html/wp-content/themes/dsbd:rw
+      - ./src/wp-content/plugins/:/var/www/html/wp-content/plugins:rw
+      - ./src:/var/www/html:rw
     ports:
       - 80:80
     restart: always
-    environment:
-      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
-      - WORDPRESS_DB_USER=${MYSQL_USER}
-      - WORDPRESS_DB_HOST=db
-      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
-      - WORDPRESS_DB_TABLE_PREFIX=${WORDPRESS_DB_TABLE_PREFIX:-wp_}
-      - WORDPRESS_DEBUG=""
     env_file:
       - .env.local
+    depends_on:
+      - db
   wpcli:
     image: wordpress:cli
     command: tail -f /dev/null
+    environment:
+      - WP_CLI_PACKAGES_DIR=/var/www/html/.wp-cli
     volumes:
-      - ./src/:/var/www/html
-    profiles:
-      - setup
+      - ./src/:/var/www/html:rw
+    user: "1000:1000"
 volumes:
-  db_data:
+  sql_data:
