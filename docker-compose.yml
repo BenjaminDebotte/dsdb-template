@@ -1,0 +1,36 @@
+services:
+  db:
+    # If you really want to use MySQL, uncomment the following line
+    image: mysql:8.0.27
+    command: "--default-authentication-plugin=mysql_native_password"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    expose:
+      - 3306
+      - 33060
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    env_file:
+      - .env.local
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - 80:80
+    restart: always
+    env_file:
+      - .env.local
+  wpcli:
+    image: wordpress:cli
+    command: tail -f /dev/null
+    volumes:
+      - ./src/:/var/www/html
+    profiles:
+      - setup
+volumes:
+  db_data:

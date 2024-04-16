@@ -1,0 +1,13 @@
+# <plugin-name>:<version|optional>, see https://developer.wordpress.org/cli/commands/package/install/
+# If you want to auto-activate it, prepend a "+" sign
++advanced-custom-fields
+akismet
+autoptimize
+ewww-image-optimizer
+really-simple-ssl
+svg-support
+updraftplus
+wordfence
+wps-hide-login
+wp-super-cache
+wordpress-seo
