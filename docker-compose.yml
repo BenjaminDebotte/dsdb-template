@@ -19,10 +19,18 @@ services:
   wordpress:
     image: wordpress:latest
     volumes:
-      - ./src:/var/www/html
+      - ./src/wp-content/themes/dsbd/:/var/www/html/wp-content/themes/dsbd
+      - ./src/wp-content/plugins/:/var/www/html/wp-content/plugins
     ports:
       - 80:80
     restart: always
+    environment:
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_TABLE_PREFIX=${WORDPRESS_DB_TABLE_PREFIX:-wp_}
+      - WORDPRESS_DEBUG=""
     env_file:
       - .env.local
   wpcli:
