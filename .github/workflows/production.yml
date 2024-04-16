@@ -1,0 +1,21 @@
+name: Deploying Wordpress Site to Production
+on:
+  push:
+    branches:
+      - production
+jobs:
+  Deploy-To-Wordpress:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+      - uses: up9cloud/action-rsync@master
+        env:
+          HOST: ${{vars.SSH_SERVER_URL}}
+          PASSWORD: ${{secrets.SSH_SERVER_PASSWORD}}
+          TARGET: .
+          SOURCE: src/
+          USER: ${{secrets.SSH_SERVER_USER}}
+          ARGS: -avz --exclude=/.git/ --exclude=/.github/

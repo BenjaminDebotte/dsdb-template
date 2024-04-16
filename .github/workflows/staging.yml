@@ -1,4 +1,4 @@
-name: Deploying Wordpress Site
+name: Deploying Wordpress Site to staging
 on:
   push:
     branches:
