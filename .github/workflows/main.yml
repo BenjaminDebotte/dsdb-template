@@ -18,3 +18,4 @@ jobs:
           TARGET: .
           SOURCE: src/
           USER: ${{secrets.SSH_SERVER_USER}}
+          ARGS: -avz --exclude=/.git/ --exclude=/.github/
