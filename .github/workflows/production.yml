@@ -16,6 +16,6 @@ jobs:
           HOST: ${{vars.SSH_SERVER_URL}}
           PASSWORD: ${{secrets.SSH_SERVER_PASSWORD}}
           TARGET: .
-          SOURCE: src/
+          SOURCE: src/wordpress/
           USER: ${{secrets.SSH_SERVER_USER}}
           ARGS: -avz --exclude=/.git/ --exclude=/.github/
