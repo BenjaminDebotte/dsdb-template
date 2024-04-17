@@ -5,17 +5,21 @@
 #
 # Note: if you want to stage/commit WP core files
 # you can delete this whole section/until Configuration.
-/src/wp-admin/
-/src/wp-content/index.php
-/src/wp-content/languages
-/src/wp-content/plugins/index.php
-/src/wp-content/themes/index.php
-/src/wp-includes/
-/src/index.php
-/src/license.txt
-/src/readme.html
-/src/wp-*.php
-/src/xmlrpc.php
+/src/wordpress/wp-admin/
+/src/wordpress/wp-content/index.php
+/src/wordpress/wp-content/languages
+/src/wordpress/wp-content/plugins/index.php
+/src/wordpress/wp-content/themes/index.php
+/src/wordpress/wp-includes/
+/src/wordpress/index.php
+/src/wordpress/license.txt
+/src/wordpress/readme.html
+/src/wordpress/wp-*.php
+/src/wordpress/xmlrpc.php
+
+
+# plugins zip
+src/plugins/*.zip
 
 #Environment files
 .env*
@@ -29,25 +33,25 @@
 # Configuration
 wp-config.php
 
-# Example themes
-/src/wp-content/themes/
-!/src/wp-content/dsbd/
-
+.DS_Store
 
 # Example plugin
-/src/wp-content/plugins/**/*
+/src/wordpress/wp-content/plugins/**/*
 
 # Uploads
-/src/wp-content/uploads/
+/src/wordpress/wp-content/uploads/
 
 # Upgrade
-/src/wp-content/upgrade/
+/src/wordpress/wp-content/upgrade/
+
+# Language
+/src/wordpress/wp-content/languages/
 
 # Log files
 *.log
 
 # htaccess
-/src/.htaccess
+/src/wordpress/.htaccess
 
 # All plugins
 #

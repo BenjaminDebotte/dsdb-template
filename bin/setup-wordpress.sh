@@ -42,11 +42,11 @@ echo -e "${Yellow}Setting up SSH connection..${Color_Off}"
 ssh-copy-id ${SSH_SERVER_USER}@${SSH_SERVER_IP}
 
 echo -e "${Yellow}Deploying ovhconfig file for PHP 7..${Color_Off}"
-scp -P ${SSH_SERVER_PORT} ./ovhconfig ${SSH_SERVER_USER}@${SSH_SERVER_IP}:.ovhconfig
+scp -P ${SSH_SERVER_PORT} ./src/ovhconfig ${SSH_SERVER_USER}@${SSH_SERVER_IP}:.ovhconfig
 
 check_dependencies # Make sure everything's installed
 
-[[ -f ./src/wp-settings.php ]] || {
+[[ -f ./src/wordpress/wp-settings.php ]] || {
   WP_CLI core download --locale=fr_FR --force --skip-content
 }
 
@@ -68,7 +68,7 @@ WP_CLI config create --skip-check --force --dbname="${MYSQL_DATABASE}" --dbuser=
 
 
 echo -e "\n\n${Yellow}Uploading Wordpress to ${SSH_SERVER_IP}..${Color_Off}"
-rsync --info=progress2 -avPz ./src/* ${SSH_SERVER_USER}@${SSH_SERVER_IP}:. # Fast upload to the remote server via SSH
+rsync --info=progress2 -avPz ./src/wordpress/* ${SSH_SERVER_USER}@${SSH_SERVER_IP}:. # Fast upload to the remote server via SSH
 
 # Here we ensure DB connection works. If so, we drop it to create it anew
 echo -e "\n\n${Yellow}Creating backup of database in db/${MYSQL_DATABASE}.backup.sql just in case before dropping.${Color_Off}"
@@ -90,12 +90,12 @@ SSH ./.bin/wp-cli theme delete --all
 
 # If package.txt exists, we then install all the packages
 echo -e "\n\n${Yellow}Installing packages..${Color_Off}"
-if [[ -f ./wp-plugins.txt ]]; then
+if [[ -f ./src/wp-plugins.txt ]]; then
     
     # This retrieves all the plugins to be installed + activated
-    SSH ./.bin/wp-cli plugin install `grep -v '#' wp-plugins.txt| grep -Eo '^\+.*' | tr '\n+' '  '` --activate
+    SSH ./.bin/wp-cli plugin install `grep -v '#' src/wp-plugins.txt| grep -Eo '^\+.*' | tr '\n+' '  '` --activate
     # This retrieves all the plugins to be installed + not activated
-    SSH ./.bin/wp-cli plugin install `grep -v '#' wp-plugins.txt| grep -Ev '^\+.*' | tr '\n' ' '`
+    SSH ./.bin/wp-cli plugin install `grep -v '#' src/wp-plugins.txt| grep -Ev '^\+.*' | tr '\n' ' '`
 fi
 
 # Website should be setup, we open it in the browser

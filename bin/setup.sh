@@ -1,14 +1,17 @@
 #!/bin/bash
 
-set -euo pipefail
+set -uo pipefail
+
+# Ensure we're at the repository's root
+cd $(git rev-parse --show-toplevel)
 
 # Start containers
 docker-compose up -d wpcli
 
 
 
-[[ -f .env.staging ]] && sh setup-wordpress.sh staging
-[[ -f .env.production ]] && sh setup-wordpress.sh production
+# [[ -f .env.staging ]] && sh bin/setup-wordpress.sh staging
+# [[ -f .env.production ]] && sh bin/setup-wordpress.sh production
 
 
 
@@ -32,12 +35,12 @@ function WP_CLI() {
   WP_CLI theme activate dsbd
   WP_CLI theme delete --all
 
-  if [[ -f ./wp-plugins.txt ]]; then
+  if [[ -f ./src/wp-plugins.txt ]]; then
       
       # This retrieves all the plugins to be installed + activated
-      WP_CLI plugin install `grep -v '#' wp-plugins.txt| grep -Eo '^\+.*' | tr '\n+' '  '` --activate
+      WP_CLI plugin install `grep -v '#' src/wp-plugins.txt| grep -Eo '^\+.*' | tr '\n+' '  '` --activate
       # This retrieves all the plugins to be installed + not activated
-      WP_CLI plugin install `grep -v '#' wp-plugins.txt| grep -Ev '^\+.*' | tr '\n' ' '`
+      WP_CLI plugin install `grep -v '#' src/wp-plugins.txt| grep -Ev '^\+.*' | tr '\n' ' '`
   fi
 
   # Website should be setup, we open it in the browser

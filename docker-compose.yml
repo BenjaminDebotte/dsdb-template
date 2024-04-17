@@ -13,9 +13,9 @@ services:
   wordpress:
     image: wordpress:latest
     volumes:
-      - ./src/wp-content/themes/dsbd/:/var/www/html/wp-content/themes/dsbd:rw
-      - ./src/wp-content/plugins/:/var/www/html/wp-content/plugins:rw
-      - ./src:/var/www/html:rw
+      - ./src/wordpress/wp-content/themes/dsbd/:/var/www/html/wp-content/themes/dsbd:rw
+      - ./src/wordpress/wp-content/plugins/:/var/www/html/wp-content/plugins:rw
+      - ./src/wordpress:/var/www/html:rw
     ports:
       - 80:80
     restart: always
@@ -30,5 +30,7 @@ services:
     environment:
       - WP_CLI_PACKAGES_DIR=/var/www/html/.wp-cli
     volumes:
-      - ./src/:/var/www/html:rw
+      - ./src:/src/:rw
+      - ./src/wordpress:/var/www/html:rw
+      - ./src/.wp-cli:/.wp-cli:rw
     user: "1000:1000"
