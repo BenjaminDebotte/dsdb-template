@@ -1,5 +1,25 @@
 # DSBD Template
 
+<!--toc:start-->
+- [DSBD Template](#dsbd-template)
+  - [Repository Structure](#repository-structure)
+  - [How to use this template](#how-to-use-this-template)
+  - [Repository usage](#repository-usage)
+    - [setup.sh](#setupsh)
+    - [setup-wordpress.sh](#setup-wordpresssh)
+    - [wp-plugins.txt](#wp-pluginstxt)
+<!--toc:end-->
+
+## Repository Structure
+- `bin/`: holds every script used in the project
+- `src/`: holds all code related files
+  - `src/wordpress/`: mounted in the `wordpress` container.
+    - `src/wordpress/wp-content/`: holds all the WordPress files, committed in git
+  - `src/plugins`: holds the zip of plugins
+  - `ovhconfig`: configure the OVH execution environment like PHP CLI version
+- `db/`: holds the local database, and some project backups
+- `.github/`: holds the workflows
+
 ##  How to use this template
 
 This project is dedicated to create a new WP project. How you should proceed:
@@ -20,9 +40,7 @@ The minimal information required is:
 
 These values are used then in `.github/workflows/production.yml` and `.github/workflows/staging.yml`.
 
-## Repository usage
-
-**TL;DR**: Create `.env.{local,staging,production}`, then run `./setup.sh` 
+Then run `./bin/setup.sh`, follow the script information then all environment should be opened in your browser.
 
 ### setup.sh
 This script holds all the logic to setup WordPress projects.
@@ -41,11 +59,39 @@ Holds all the plugins that should be installed. Works as following:
 - `+` means to activate the plugin at installation time, *optional*
 - `version` is the plugin version, optional
 
-```sh
-# Editer wp-plugins.txt
-vscode wp-plugins.txt
+If you need to reference a `zip` file, do as follow:
+- Put the zip in `src/plugins/<myplugin>.zip`
+- Specify the path like `/src/plugins/<myplugin>.zip` in wp-plugins.txt like above
 
-./setup.sh
+
+## Development
+
+Usually, the only directory that should be committed and changed is `src/wordpress/wp-config/themes/dsdb`. 
+
+Changes to `wp-config.php` should be done via `.env` files and `wp-cli` in the `bin/setup-wordpress.sh` script
+
+Development of feature should be done in a specific branch locally. Once it's done and tested, it should be merged into `main` to be deployed to the `staging` environment.
+
+
+```sh
+# The step belows can also be done via VSCode UI indeed
+
+git switch -c my_feature_branch
+# Do code and stuff
+git switch main
+git merge my_feature_branch
+git push origin main
 ```
 
 
+Pushing the `main` branch will trigger a build in GitHub, see https://github.com/<yourname>/dsdb-template/actions
+
+Once the code is ready to ship to `production`, do as following:
+
+```sh
+git switch production
+git merge main
+git push origin production
+```
+
+It will automatically trigger the deployment to the `production` environment.
